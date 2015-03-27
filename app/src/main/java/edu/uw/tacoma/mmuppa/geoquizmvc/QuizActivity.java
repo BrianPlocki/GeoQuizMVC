@@ -45,8 +45,7 @@ public class QuizActivity extends ActionBarActivity {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCurrentIndex++;
-                if (mCurrentIndex == mQuestionBank.length) mCurrentIndex = 0;
+                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 int question = mQuestionBank[mCurrentIndex].getQuestion();
                 mQuestionTextView.setText(question);
             }
