@@ -50,7 +50,6 @@ public class QuizActivity extends ActionBarActivity {
                 mQuestionTextView.setText(question);
             }
         });
-
     }
 
     private class TrueFalseListener implements View.OnClickListener {
