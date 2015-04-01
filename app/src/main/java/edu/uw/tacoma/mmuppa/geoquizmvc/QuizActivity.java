@@ -1,5 +1,7 @@
 package edu.uw.tacoma.mmuppa.geoquizmvc;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,6 +16,8 @@ public class QuizActivity extends ActionBarActivity {
 
     private Button mTrueButton, mFalseButton, mNextButton;
     private TextView mQuestionTextView;
+    private SharedPreferences mPreferences;
+    private static final String currentIndex = "current_index";
 
     private QuestionBank[] mQuestionBank = {
             new QuestionBank(R.string.question_oceans, true),
@@ -29,6 +33,15 @@ public class QuizActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quiz_main);
+
+        mPreferences = getPreferences(Context.MODE_PRIVATE);
+        mCurrentIndex = mPreferences.getInt(getString(R.string.question_index), 0);
+
+        // Another way but this is only possible if your activity's
+        // onDestroy is called.
+        //if (savedInstanceState != null) {
+        //    mCurrentIndex = savedInstanceState.getInt(currentIndex, 0);
+        //}
 
         mQuestionTextView = (TextView) findViewById(R.id.question_textView);
         int question = mQuestionBank[mCurrentIndex].getQuestion();
@@ -51,6 +64,32 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPreferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putInt(getString(R.string.question_index), mCurrentIndex);
+        editor.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPreferences = getPreferences(Context.MODE_PRIVATE);
+        mCurrentIndex = mPreferences.getInt(getString(R.string.question_index), 0);
+
+        mQuestionTextView = (TextView) findViewById(R.id.question_textView);
+        int question = mQuestionBank[mCurrentIndex].getQuestion();
+        mQuestionTextView.setText(question);
+    }
+
+    /*@Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("current_index", mCurrentIndex);
+        super.onSaveInstanceState(outState);
+    }*/
 
     private class TrueFalseListener implements View.OnClickListener {
 
